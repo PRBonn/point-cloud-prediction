@@ -1,0 +1,98 @@
+EXPERIMENT:
+  ID: pcf
+
+DATA_CONFIG:
+  DATASET_NAME: KITTIOdometry
+  GENERATE_FILES: False
+  COMPUTE_MEAN_AND_STD: False
+  DATALOADER:
+    NUM_WORKER: 4
+    SHUFFLE: True
+  SPLIT:
+    TRAIN:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    VAL:
+      - 6
+      - 7
+    TEST:
+      - 8
+      - 9
+      - 10
+     
+  HEIGHT: 64
+  WIDTH: 2048
+  FOV_UP: 3.0
+  FOV_DOWN: -25.0
+  MAX_RANGE: 85.0 # average max value in training set
+  MIN_RANGE: 1.0 # average min value in training set
+  MEAN: 
+    - 10.839 #KITTI Odometry
+    - 0.005
+    - 0.494
+    - -1.13
+    - 0.287
+    
+  STD:
+    - 9.314 #KITTI Odometry
+    - 11.521
+    - 8.262
+    - 0.828
+    - 0.14
+
+MODEL:
+  N_PAST_STEPS: 5
+  N_FUTURE_STEPS: 5
+  MASK_THRESHOLD: 0.5
+  USE:
+    XYZ: False
+    INTENSITY: False
+  CHANNELS:
+    - 16
+    - 32
+    - 64
+    - 128
+    - 256
+    - 512
+  SKIP_IF_CHANNEL_SIZE: # Adds a skip connection between encoder and decoder at desired channels
+    - 32
+    - 64
+    - 128
+    - 256
+  TEMPORAL_KERNEL_SIZE: # Reduces the temporal channel by value-1
+    - 2
+    - 2
+    - 2
+    - 2
+    - 1
+  CIRCULAR_PADDING: True
+  NORM: batch # batch, group, none, instance
+  N_CHANNELS_PER_GROUP: 16 
+
+TRAIN:
+  LR: 0.001
+  LR_EPOCH: 1
+  LR_DECAY: 0.99
+  MAX_EPOCH: 50
+  BATCH_SIZE: 4
+  BATCH_ACC: 4
+  N_GPUS: 1
+  LOG_EVERY_N_STEPS: 10
+  LOSS_WEIGHT_CHAMFER_DISTANCE: 0.0
+  LOSS_WEIGHT_RANGE_VIEW: 1.0
+  LOSS_WEIGHT_MASK: 1.0
+
+VALIDATION:
+  SELECTED_SEQUENCE_AND_FRAME:
+    6:
+      - 4
+      - 10
+
+TEST:
+  N_BATCHES_TO_SAVE: -1
+  SAVE_POINT_CLOUDS: False
+  N_DOWNSAMPLED_POINTS_CD: -1
