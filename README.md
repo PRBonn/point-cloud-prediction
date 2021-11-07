@@ -32,13 +32,12 @@ Download the Kitti Odometry data from the official [website](http://www.cvlibs.n
 ## Installation
 
 ### Source Code
-Clone this repository including the Chamfer distance submodule
+Clone this repository and run 
 ```bash
-git clone --recurse-submodules git@github.com:benemer/point-cloud-prediction.git
 cd point-cloud-prediction
+git submodule update --init
 ```
-
-The Chamfer distance submodule is originally taken from [here](https://github.com/chrdiller/pyTorchChamferDistance) with some modifications to use it as a submodule. All parameters are stored in ```config/parameters.yaml```.
+to install the Chamfer distance submodule. The Chamfer distance submodule is originally taken from [here](https://github.com/chrdiller/pyTorchChamferDistance) with some modifications to use it as a submodule. All parameters are stored in ```config/parameters.yaml```.
 
 ### Dependencies
 In this project, we use CUDA 10.2. All other dependencies are managed with Python Poetry and can be found in the ```poetry.lock``` file. If you want to use Python Poetry (recommended), install it with:
