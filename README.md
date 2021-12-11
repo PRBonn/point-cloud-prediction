@@ -8,8 +8,11 @@ This is a Pytorch-Lightning implementation of the paper "Self-supervised Point C
 1. [Publication](#Publication)
 2. [Data](#Data)
 3. [Installation](#Installation)
-4. [Download](#Dwnload)
-5. [License](#License)
+4. [Training](#Training)
+5. [Testing](#Testing)
+6. [Visualization](#Visualization)
+7. [Download](#Dwnload)
+8. [License](#License)
 
 ![](docs/architecture.png)
 *Overview of our architecture*
