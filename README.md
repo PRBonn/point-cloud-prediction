@@ -105,9 +105,9 @@ python pcf/test.py -m 7f1f6d4/pcf_20211106_140014 -l 5 -s
 if you want to test the model on 5 batches and save the resulting point clouds.
 
 ## Visualization
-After passing the ```-s``` flag to the testing script, the predicted range images will be saved as .svg files in ```/pcf/runs/COMMIT/EXPERIMENT_DATE_TIME/range_view_predictions```. The predicted point clouds are saved to ```/pcf/runs/COMMIT/EXPERIMENT_DATE_TIME/test/point_clouds```. You can visualize them by running
+After passing the ```-s``` flag to the testing script, the predicted range images will be saved as .svg files in ```pcf/runs/COMMIT/EXPERIMENT_DATE_TIME/range_view_predictions```. The predicted point clouds are saved to ```pcf/runs/COMMIT/EXPERIMENT_DATE_TIME/test/point_clouds```. You can visualize them by running
 ```bash
-python pcf/visualize.py -p /pcf/runs/COMMIT/EXPERIMENT_DATE_TIME/test/point_clouds
+python pcf/visualize.py -p pcf/runs/COMMIT/EXPERIMENT_DATE_TIME/test/point_clouds
 ```
 
 ![](docs/predictions.gif)
