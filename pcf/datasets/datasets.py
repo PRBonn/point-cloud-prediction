@@ -75,6 +75,8 @@ class KittiOdometryModule(LightningDataModule):
             drop_last=False,
             timeout=0,
         )
+        # print(self.cfg["TRAIN"]["BATCH_SIZE"])
+        # quit()
         self.test_iter = iter(self.test_loader)
 
         # Optionally compute statistics of training data

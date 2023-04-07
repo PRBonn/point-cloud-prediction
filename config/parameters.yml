@@ -3,7 +3,7 @@ EXPERIMENT:
 
 DATA_CONFIG:
   DATASET_NAME: KITTIOdometry
-  GENERATE_FILES: False # If true, the data will be pre-processed
+  GENERATE_FILES: True # If true, the data will be pre-processed
   COMPUTE_MEAN_AND_STD: False # If true, the mean and std of the training data will be computed to use it in MEAN and STD.
   DATALOADER:
     NUM_WORKER: 4
@@ -11,18 +11,20 @@ DATA_CONFIG:
   SPLIT: # Specify the sequences here. We follow the KITTI format.
     TRAIN:
       - 0
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
+      # - 1
+      # - 2
+      # - 3
+      # - 4
+      # - 5
     VAL:
-      - 6
-      - 7
+      - 0
+      # - 6
+      # - 7
     TEST:
-      - 8
-      - 9
-      - 10
+      - 0
+      # - 8
+      # - 9
+      # - 10
      
   HEIGHT: 64 # Height of range images
   WIDTH: 2048 # Width of range images
