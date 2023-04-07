@@ -1,4 +1,4 @@
 [submodule "pyTorchChamferDistance"]
 	path = pyTorchChamferDistance
-  url = git@github.com:benemer/pyTorchChamferDistance.git
+  url = https://github.com/benemer/pyTorchChamferDistance.git
   ignore=dirty
