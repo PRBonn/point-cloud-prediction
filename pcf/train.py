@@ -8,6 +8,7 @@ import yaml
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
+from pytorch_lightning.strategies.ddp import DDPStrategy
 import subprocess
 
 from pcf.datasets.datasets import KittiOdometryModule
@@ -145,7 +146,10 @@ if __name__ == "__main__":
 
     ###### Trainer
     trainer = Trainer(
-        gpus=cfg["TRAIN"]["N_GPUS"],
+        accelerator="gpu",
+        devices=cfg["TRAIN"]["N_GPUS"],
+        #strategy="ddp",
+        num_nodes=1,
         logger=tb_logger,
         accumulate_grad_batches=cfg["TRAIN"]["BATCH_ACC"],
         max_epochs=cfg["TRAIN"]["MAX_EPOCH"],
@@ -154,6 +158,8 @@ if __name__ == "__main__":
         ],  # times accumulate_grad_batches
         resume_from_checkpoint=resume_from_checkpoint,
         callbacks=[lr_monitor, checkpoint],
+        default_root_dir='log',
+        strategy = DDPStrategy(find_unused_parameters=False)
     )
 
     ###### Training

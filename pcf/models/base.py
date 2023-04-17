@@ -13,6 +13,7 @@ from pytorch_lightning.core.lightning import LightningModule
 from pcf.models.loss import Loss
 from pcf.utils.projection import projection
 from pcf.utils.logger import log_point_clouds, save_range_and_mask, save_point_clouds
+from lion_pytorch import Lion
 
 
 class BasePredictionModel(LightningModule):
@@ -63,13 +64,22 @@ class BasePredictionModel(LightningModule):
 
     def configure_optimizers(self):
         """Optimizers"""
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.cfg["TRAIN"]["LR"])
+        #optimizer = torch.optim.Adam(self.parameters(), lr=self.cfg["TRAIN"]["LR"])
+        optimizer = Lion(self.parameters(), lr=self.cfg["TRAIN"]["LR"])
         scheduler = torch.optim.lr_scheduler.StepLR(
             optimizer,
             step_size=self.cfg["TRAIN"]["LR_EPOCH"],
             gamma=self.cfg["TRAIN"]["LR_DECAY"],
         )
+        #scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,
+        #                        T_max = 400, # Maximum number of iterations.
+        #                        eta_min = 1e-5, verbose= True)
         return [optimizer], [scheduler]
+        #return {
+        #        'optimizer': optimizer,
+        #        'lr_scheduler': scheduler,
+        #        'monitor': 'val/loss'
+        #    }
 
     def training_step(self, batch, batch_idx):
         """Pytorch Lightning training step including logging
