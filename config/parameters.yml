@@ -11,18 +11,20 @@ DATA_CONFIG:
   SPLIT: # Specify the sequences here. We follow the KITTI format.
     TRAIN:
       - 0
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
+        #- 1
+        #- 2
+        #- 3
+        #- 4
+        #- 5
     VAL:
-      - 6
-      - 7
+      - 0
+      #- 6
+      #- 7
     TEST:
-      - 8
-      - 9
-      - 10
+      - 0
+        # - 8
+        # - 9
+        # - 10
      
   HEIGHT: 64 # Height of range images
   WIDTH: 2048 # Width of range images
@@ -80,7 +82,7 @@ TRAIN:
   MAX_EPOCH: 2
   BATCH_SIZE: 8
   BATCH_ACC: 4
-  N_GPUS: 3
+  N_GPUS: 1
   LOG_EVERY_N_STEPS: 1
   LOSS_WEIGHT_CHAMFER_DISTANCE: 0.0
   LOSS_WEIGHT_RANGE_VIEW: 1.0

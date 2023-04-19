@@ -95,7 +95,7 @@ class BasePredictionModel(LightningModule):
         future = batch["fut_data"]
         output = self.forward(past)
         loss = self.loss(output, future, "train")
-
+        #print(loss["loss"].item())
         self.log("train/loss", loss["loss"])
         self.log("train/mean_chamfer_distance", loss["mean_chamfer_distance"])
         self.log("train/final_chamfer_distance", loss["final_chamfer_distance"])

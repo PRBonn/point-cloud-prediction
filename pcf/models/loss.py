@@ -39,9 +39,17 @@ class Loss(nn.Module):
         """
 
         target_range_image = target[:, 0, :, :, :]
+        target_semantic_label = target[:, 4, :, :, :]
+        
+        ground_mask = (
+                (target_semantic_label==70) | (target_semantic_label==40)\
+                        | (target_semantic_label==44) | (target_semantic_label==48)\
+                        | (target_semantic_label==49) | (target_semantic_label==50)\
+                ).type(torch.uint8)
+        object_mask = torch.logical_not(ground_mask)
 
         # Range view
-        loss_range_view = self.loss_range(output, target_range_image)
+        loss_range_view = self.loss_range(output, target_range_image, ground_mask, object_mask)
 
         # Mask
         loss_mask = self.loss_mask(output, target_range_image)
@@ -109,12 +117,15 @@ class loss_range(nn.Module):
         self.cfg = cfg
         self.loss = nn.L1Loss(reduction="mean")
 
-    def forward(self, output, target_range_image):
+    def forward(self, output, target_range_image, ground_mask, object_mask):
         # Do not count L1 loss for invalid GT points
         gt_masked_output = output["rv"].clone()
         gt_masked_output[target_range_image == -1.0] = -1.0
+        #print((non_veg_ranges*gt_masked_output).shape)
+        #quit()
 
-        loss = self.loss(gt_masked_output, target_range_image)
+        loss = self.loss(ground_mask*gt_masked_output, ground_mask*target_range_image)\
+                + 2*self.loss(object_mask*gt_masked_output, object_mask*target_range_image)
         return loss
 
 

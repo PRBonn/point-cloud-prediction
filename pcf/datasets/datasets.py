@@ -137,6 +137,7 @@ class KittiOdometryRaw(Dataset):
         self.filenames_range = {}
         self.filenames_xyz = {}
         self.filenames_intensity = {}
+        self.filenames_semantic = {}
 
         # Create a dict idx_mapper that maps from a dataset idx to a sequence number and the index of the current scan
         self.dataset_size = 0
@@ -144,7 +145,6 @@ class KittiOdometryRaw(Dataset):
         idx = 0
         for seq in self.sequences:
             seqstr = "{0:02d}".format(int(seq))
-
             scan_path_range = os.path.join(self.root_dir, seqstr, "processed", "range")
             self.filenames_range[seq] = load_files(scan_path_range)
 
@@ -155,8 +155,11 @@ class KittiOdometryRaw(Dataset):
             scan_path_intensity = os.path.join(
                 self.root_dir, seqstr, "processed", "intensity"
             )
-            self.filenames_intensity[seq] = load_files(scan_path_intensity)
-            assert len(self.filenames_range[seq]) == len(self.filenames_intensity[seq])
+            scan_path_semantic = os.path.join(
+                self.root_dir, seqstr, "processed", "semantic"
+            )
+            self.filenames_semantic[seq] = load_files(scan_path_semantic)
+            assert len(self.filenames_range[seq]) == len(self.filenames_semantic[seq])
 
             # Get number of sequences based on number of past and future steps
             n_samples_sequence = max(
@@ -197,7 +200,7 @@ class KittiOdometryRaw(Dataset):
         to_idx = scan_idx
         past_filenames_range = self.filenames_range[seq][from_idx : to_idx + 1]
         past_filenames_xyz = self.filenames_xyz[seq][from_idx : to_idx + 1]
-        past_filenames_intensity = self.filenames_intensity[seq][from_idx : to_idx + 1]
+        past_filenames_intensity = self.filenames_semantic[seq][from_idx : to_idx + 1]
 
         for t in range(self.n_past_steps):
             past_data[0, t, :, :] = self.load_range(past_filenames_range[t])
@@ -213,7 +216,7 @@ class KittiOdometryRaw(Dataset):
         to_idx = scan_idx + self.n_future_steps
         fut_filenames_range = self.filenames_range[seq][from_idx : to_idx + 1]
         fut_filenames_xyz = self.filenames_xyz[seq][from_idx : to_idx + 1]
-        fut_filenames_intensity = self.filenames_intensity[seq][from_idx : to_idx + 1]
+        fut_filenames_intensity = self.filenames_semantic[seq][from_idx : to_idx + 1]
 
         for t in range(self.n_future_steps):
             fut_data[0, t, :, :] = self.load_range(fut_filenames_range[t])
