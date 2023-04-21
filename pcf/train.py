@@ -121,6 +121,7 @@ if __name__ == "__main__":
 
     ###### Dataset
     data = KittiOdometryModule(cfg)
+    data.setup()
 
     ###### Model
     model = TCNet(cfg)
@@ -160,8 +161,26 @@ if __name__ == "__main__":
         callbacks=[lr_monitor, checkpoint],
         default_root_dir='log',
         strategy = DDPStrategy(find_unused_parameters=False),
-        check_val_every_n_epoch=5
+        check_val_every_n_epoch=5,
+        limit_test_batches=1.0
     )
 
     ###### Training
     trainer.fit(model, data)
+    
+    ###### Testing
+    logger = TensorBoardLogger(
+        save_dir=cfg["LOG_DIR"], default_hp_metric=False, name="test", version=""
+    )
+    results = trainer.test(model, data.test_dataloader())
+
+    if logger:
+        filename = os.path.join(
+            cfg["LOG_DIR"], "test", "results_" + time.strftime("%Y%m%d_%H%M%S") + ".yml"
+        )
+        log_to_save = {**{"results": results}, **vars(args), **cfg}
+        with open(filename, "w") as yaml_file:
+            yaml.dump(log_to_save, yaml_file, default_flow_style=False)
+
+
+

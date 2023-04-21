@@ -1,5 +1,5 @@
 EXPERIMENT:
-  ID: pcf # Give your experiment a unique ID which is used in the log
+  ID: semantic_mask # Give your experiment a unique ID which is used in the log
 
 DATA_CONFIG:
   DATASET_NAME: KITTIOdometry
@@ -21,8 +21,8 @@ DATA_CONFIG:
       - 7
     TEST:
       - 8
-      - 9
-      - 10
+      #- 9
+      #- 10
      
   HEIGHT: 64 # Height of range images
   WIDTH: 2048 # Width of range images
@@ -77,10 +77,10 @@ TRAIN:
   LR: 0.001
   LR_EPOCH: 1
   LR_DECAY: 0.99
-  MAX_EPOCH: 25
+  MAX_EPOCH: 50
   BATCH_SIZE: 8
   BATCH_ACC: 4
-  N_GPUS: 4
+  N_GPUS: 3
   LOG_EVERY_N_STEPS: 10
   LOSS_WEIGHT_CHAMFER_DISTANCE: 0.0
   LOSS_WEIGHT_RANGE_VIEW: 1.0
@@ -94,5 +94,5 @@ VALIDATION:
 
 TEST:
   N_BATCHES_TO_SAVE: -1 # If set to -1 and SAVE_POINT_CLOUDS is true, all batches of the test set will be saved.
-  SAVE_POINT_CLOUDS: False
+  SAVE_POINT_CLOUDS: True
   N_DOWNSAMPLED_POINTS_CD: -1 # Can evaluate the CD on downsampled point clouds. Set -1 to evaluate on full point clouds.

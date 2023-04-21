@@ -202,8 +202,9 @@ class BasePredictionModel(LightningModule):
             (self.chamfer_distances_tensor, loss["chamfer_distances_tensor"]), dim=1
         )
 
+        #print(self.cfg["TEST"]["SAVE_POINT_CLOUDS"])
         if self.cfg["TEST"]["SAVE_POINT_CLOUDS"]:
-            save_point_clouds(self.cfg, self.projection, batch, output)
+            #save_point_clouds(self.cfg, self.projection, batch, output)
 
             sequence_batch, frame_batch = batch["meta"]
             for sample_idx in range(frame_batch.shape[0]):

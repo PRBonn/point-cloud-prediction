@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-
+import matplotlib as mpl
 
 def make_path(path):
     if not os.path.exists(path):
@@ -203,7 +203,7 @@ def save_range_and_mask(cfg, projection, batch, output, sample_index, sequence, 
         max_range - min_range
     )
 
-    for s in range(n_past_steps + n_future_steps):
+    for s in range(5, n_past_steps + n_future_steps):
         step = "{0:02d}".format(s)
 
         # Save rv and mask predictions
@@ -216,7 +216,7 @@ def save_range_and_mask(cfg, projection, batch, output, sample_index, sequence, 
         ratio = 5 * H / W
         props = dict(boxstyle="round", facecolor="wheat", alpha=0.5)
         fig, axs = plt.subplots(5, 1, sharex=True, figsize=(30, 30 * ratio))
-        axs[0].imshow(concat_gt_rv_normalized[s, :, :].cpu().detach().numpy())
+        axs[0].imshow(concat_gt_rv_normalized[s, :, :].cpu().detach().numpy()*255, cmap=mpl.colormaps['jet'])
         axs[0].text(
             0.01,
             0.8,
@@ -228,7 +228,7 @@ def save_range_and_mask(cfg, projection, batch, output, sample_index, sequence, 
         )
 
         axs[1].imshow(
-            concat_combined_pred_rv_normalized[s, :, :].cpu().detach().numpy()
+            concat_combined_pred_rv_normalized[s, :, :].cpu().detach().numpy()*255, cmap=mpl.colormaps['jet']
         )
         axs[1].text(
             0.01,
@@ -240,7 +240,7 @@ def save_range_and_mask(cfg, projection, batch, output, sample_index, sequence, 
             bbox=props,
         )
 
-        axs[2].imshow(concat_pred_rv_normalized[s, :, :].cpu().detach().numpy())
+        axs[2].imshow(concat_pred_rv_normalized[s, :, :].cpu().detach().numpy()*255, cmap=mpl.colormaps['jet'])
         axs[2].text(
             0.01,
             0.8,

@@ -9,6 +9,7 @@ import yaml
 from pytorch_lightning import Trainer
 from pytorch_lightning import loggers as pl_loggers
 
+from pytorch_lightning.strategies.ddp import DDPStrategy
 import pcf.datasets.datasets as datasets
 import pcf.models.TCNet as TCNet
 
@@ -43,7 +44,6 @@ if __name__ == "__main__":
     )
 
     args, unparsed = parser.parse_known_args()
-
     # load config file
     config_filename = "./pcf/runs/" + args.model + "/hparams.yaml"
     cfg = yaml.safe_load(open(config_filename))
@@ -74,6 +74,7 @@ if __name__ == "__main__":
         checkpoint_path = "./pcf/runs/" + args.model + "/checkpoints/last.ckpt"
     cfg["TEST"]["USED_CHECKPOINT"] = checkpoint_path
 
+
     model = TCNet.TCNet.load_from_checkpoint(checkpoint_path, cfg=cfg)
 
     # Only log if test is done on full data
@@ -86,7 +87,11 @@ if __name__ == "__main__":
 
     trainer = Trainer(
         limit_test_batches=args.limit_test_batches,
-        gpus=cfg["TRAIN"]["N_GPUS"],
+        accelerator="gpu",
+        devices=3, #cfg["TRAIN"]["N_GPUS"],
+        num_nodes=1,
+        #gpus=cfg["TRAIN"]["N_GPUS"],
+        strategy = DDPStrategy(find_unused_parameters=False),
         logger=logger,
     )
 
