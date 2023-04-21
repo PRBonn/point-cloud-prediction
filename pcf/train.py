@@ -159,7 +159,8 @@ if __name__ == "__main__":
         resume_from_checkpoint=resume_from_checkpoint,
         callbacks=[lr_monitor, checkpoint],
         default_root_dir='log',
-        strategy = DDPStrategy(find_unused_parameters=False)
+        strategy = DDPStrategy(find_unused_parameters=False),
+        check_val_every_n_epoch=5
     )
 
     ###### Training

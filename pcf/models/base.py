@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from pytorch_lightning.core.lightning import LightningModule
+from pytorch_lightning.core.module import LightningModule
 from pcf.models.loss import Loss
 from pcf.utils.projection import projection
 from pcf.utils.logger import log_point_clouds, save_range_and_mask, save_point_clouds
@@ -64,8 +64,8 @@ class BasePredictionModel(LightningModule):
 
     def configure_optimizers(self):
         """Optimizers"""
-        #optimizer = torch.optim.Adam(self.parameters(), lr=self.cfg["TRAIN"]["LR"])
-        optimizer = Lion(self.parameters(), lr=self.cfg["TRAIN"]["LR"])
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.cfg["TRAIN"]["LR"])
+        #optimizer = Lion(self.parameters(), lr=self.cfg["TRAIN"]["LR"])
         scheduler = torch.optim.lr_scheduler.StepLR(
             optimizer,
             step_size=self.cfg["TRAIN"]["LR_EPOCH"],
@@ -130,34 +130,38 @@ class BasePredictionModel(LightningModule):
         self.log("val/loss_range_view", loss["loss_range_view"], on_epoch=True)
         self.log("val/loss_mask", loss["loss_mask"], on_epoch=True)
 
-        selected_sequence_and_frame = self.cfg["VALIDATION"][
-            "SELECTED_SEQUENCE_AND_FRAME"
-        ]
-        sequence_batch, frame_batch = batch["meta"]
-        for sample_idx in range(frame_batch.shape[0]):
-            sequence = sequence_batch[sample_idx].item()
-            frame = frame_batch[sample_idx].item()
-            if sequence in selected_sequence_and_frame.keys():
-                if frame in selected_sequence_and_frame[sequence]:
-                    log_point_clouds(
-                        self.logger.experiment,
-                        self.projection,
-                        self.current_epoch,
-                        batch,
-                        output,
-                        sample_idx,
-                        sequence,
-                        frame,
-                    )
-                    save_range_and_mask(
-                        self.cfg,
-                        self.projection,
-                        batch,
-                        output,
-                        sample_idx,
-                        sequence,
-                        frame,
-                    )
+        #selected_sequence_and_frame = self.cfg["VALIDATION"][
+        #    "SELECTED_SEQUENCE_AND_FRAME"
+        #]
+        #sequence_batch, frame_batch = batch["meta"]
+        #for sample_idx in range(frame_batch.shape[0]):
+        #    sequence = sequence_batch[sample_idx].item()
+        #    frame = frame_batch[sample_idx].item()
+        #    if sequence in selected_sequence_and_frame.keys():
+        #        if frame in selected_sequence_and_frame[sequence]:
+        #            t1 = time.time()
+        #            log_point_clouds(
+        #                self.logger.experiment,
+        #                self.projection,
+        #                self.current_epoch,
+        #                batch,
+        #                output,
+        #                sample_idx,
+        #                sequence,
+        #                frame,
+        #            )
+        #            print("log_point_clouds: ",time.time()-t1)
+        #            t1 = time.time()
+        #            save_range_and_mask(
+        #                self.cfg,
+        #                self.projection,
+        #                batch,
+        #                output,
+        #                sample_idx,
+        #                sequence,
+        #                frame,
+        #            )
+        #            print("save_range_and_mask: ",time.time()-t1)
 
     def test_step(self, batch, batch_idx):
         """Pytorch Lightning test step including logging

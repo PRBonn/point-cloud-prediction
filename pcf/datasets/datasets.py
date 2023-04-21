@@ -52,6 +52,7 @@ class KittiOdometryModule(LightningDataModule):
             pin_memory=True,
             drop_last=False,
             timeout=0,
+            persistent_workers=True
         )
         self.train_iter = iter(self.train_loader)
 
@@ -63,6 +64,7 @@ class KittiOdometryModule(LightningDataModule):
             pin_memory=True,
             drop_last=False,
             timeout=0,
+            persistent_workers=True
         )
         self.valid_iter = iter(self.valid_loader)
 
@@ -74,6 +76,7 @@ class KittiOdometryModule(LightningDataModule):
             pin_memory=True,
             drop_last=False,
             timeout=0,
+            persistent_workers=True
         )
         # print(self.cfg["TRAIN"]["BATCH_SIZE"])
         # quit()
