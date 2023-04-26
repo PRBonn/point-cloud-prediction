@@ -162,6 +162,7 @@ if __name__ == "__main__":
         default_root_dir='log',
         strategy = DDPStrategy(find_unused_parameters=False),
         check_val_every_n_epoch=5,
+        limit_train_batches=1.0,
         limit_test_batches=1.0
     )
 
@@ -172,6 +173,8 @@ if __name__ == "__main__":
     logger = TensorBoardLogger(
         save_dir=cfg["LOG_DIR"], default_hp_metric=False, name="test", version=""
     )
+    checkpoint_path = cfg["LOG_DIR"] + "/checkpoints/min_val_loss.ckpt"
+    model = TCNet.load_from_checkpoint(checkpoint_path, cfg=cfg)
     results = trainer.test(model, data.test_dataloader())
 
     if logger:

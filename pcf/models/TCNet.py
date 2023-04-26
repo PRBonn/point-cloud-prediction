@@ -155,6 +155,7 @@ class TCNet(BasePredictionModel):
 
         # Standardization and set invalid points to zero
         mean = self.mean[None, self.inputs, None, None, None]
+
         std = self.std[None, self.inputs, None, None, None]
         x = torch.true_divide(x - mean, std)
         x = x * past_mask
