@@ -88,7 +88,7 @@ if __name__ == "__main__":
     trainer = Trainer(
         limit_test_batches=args.limit_test_batches,
         accelerator="gpu",
-        devices=3, #cfg["TRAIN"]["N_GPUS"],
+        devices=1, #cfg["TRAIN"]["N_GPUS"],
         num_nodes=1,
         #gpus=cfg["TRAIN"]["N_GPUS"],
         strategy = DDPStrategy(find_unused_parameters=False),

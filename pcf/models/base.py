@@ -15,7 +15,6 @@ from pcf.utils.projection import projection
 from pcf.utils.logger import log_point_clouds, save_range_and_mask, save_point_clouds
 from lion_pytorch import Lion
 
-
 class BasePredictionModel(LightningModule):
     """Pytorch Lightning base model for point cloud prediction"""
 
