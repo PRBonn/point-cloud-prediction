@@ -93,6 +93,7 @@ class BasePredictionModel(LightningModule):
         past = batch["past_data"]
         future = batch["fut_data"]
         output = self.forward(past)
+        #print(self.current_epoch)
         loss = self.loss(output, future, "train")
         #print(loss["loss"].item())
         self.log("train/loss", loss["loss"])

@@ -1,5 +1,5 @@
 EXPERIMENT:
-  ID: test # Give your experiment a unique ID which is used in the log
+  ID: sem_in_sem_mask_loss_w_4 # Give your experiment a unique ID which is used in the log
 
 DATA_CONFIG:
   DATASET_NAME: KITTIOdometry
@@ -50,7 +50,7 @@ MODEL:
   MASK_THRESHOLD: 0.5 # Threshold for valid point mask classification
   USE:
     XYZ: False # If true: x,y, and z coordinates will be used as additional input channels
-    INTENSITY: False # If true: intensity will be used as additional input channel
+    INTENSITY: True # If true: intensity will be used as additional input channel
   CHANNELS: # Number of channels in encoder and decoder, respectively.
     - 16
     - 32
@@ -77,10 +77,10 @@ TRAIN:
   LR: 0.001
   LR_EPOCH: 1
   LR_DECAY: 0.99
-  MAX_EPOCH: 1
+  MAX_EPOCH: 50
   BATCH_SIZE: 8
   BATCH_ACC: 4
-  N_GPUS: 2
+  N_GPUS: 4
   LOG_EVERY_N_STEPS: 10
   LOSS_WEIGHT_CHAMFER_DISTANCE: 0.0
   LOSS_WEIGHT_RANGE_VIEW: 1.0

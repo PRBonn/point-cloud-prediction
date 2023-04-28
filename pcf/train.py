@@ -151,39 +151,39 @@ if __name__ == "__main__":
         devices=cfg["TRAIN"]["N_GPUS"],
         num_nodes=1,
         logger=tb_logger,
-        accumulate_grad_batches=cfg["TRAIN"]["BATCH_ACC"],
+        accumulate_grad_batches=cfg["TRAIN"]["BATCH_ACC"], # times accumulate_grad_batches
         max_epochs=cfg["TRAIN"]["MAX_EPOCH"],
         log_every_n_steps=cfg["TRAIN"][
             "LOG_EVERY_N_STEPS"
-        ],  # times accumulate_grad_batches
+        ],  
         resume_from_checkpoint=resume_from_checkpoint,
         callbacks=[lr_monitor, checkpoint],
         default_root_dir='log',
         strategy = DDPStrategy(find_unused_parameters=False),
-        check_val_every_n_epoch=1,
-        limit_train_batches=0.3,
-        limit_val_batches=0.3,
-        limit_test_batches=0.5
+        check_val_every_n_epoch=5,
+        limit_train_batches=1.0,
+        limit_val_batches=1.0,
+        limit_test_batches=1.0
     )
 
     ###### Training
-    #trainer.fit(model, data)
+    trainer.fit(model, data)
     
     ###### Testing
-    logger = TensorBoardLogger(
-        save_dir=cfg["LOG_DIR"], default_hp_metric=False, name="test", version=""
-    )
-    checkpoint_path = cfg["LOG_DIR"] + "/checkpoints/min_val_loss.ckpt"
+    #logger = TensorBoardLogger(
+    #    save_dir=cfg["LOG_DIR"], default_hp_metric=False, name="test", version=""
+    #)
+    #checkpoint_path = cfg["LOG_DIR"] + "/checkpoints/min_val_loss.ckpt"
     #model = TCNet.load_from_checkpoint(checkpoint_path, cfg=cfg)
-    results = trainer.test(model, data.test_dataloader())
+    #results = trainer.test(model, data.test_dataloader())
 
-    if logger:
-        filename = os.path.join(
-            cfg["LOG_DIR"], "test", "results_" + time.strftime("%Y%m%d_%H%M%S") + ".yml"
-        )
-        log_to_save = {**{"results": results}, **vars(args), **cfg}
-        with open(filename, "w") as yaml_file:
-            yaml.dump(log_to_save, yaml_file, default_flow_style=False)
+    #if logger:
+    #    filename = os.path.join(
+    #        cfg["LOG_DIR"], "test", "results_" + time.strftime("%Y%m%d_%H%M%S") + ".yml"
+    #    )
+    #    log_to_save = {**{"results": results}, **vars(args), **cfg}
+    #    with open(filename, "w") as yaml_file:
+    #        yaml.dump(log_to_save, yaml_file, default_flow_style=False)
 
 
 

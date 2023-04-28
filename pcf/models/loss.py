@@ -121,12 +121,10 @@ class loss_range(nn.Module):
         # Do not count L1 loss for invalid GT points
         gt_masked_output = output["rv"].clone()
         gt_masked_output[target_range_image == -1.0] = -1.0
-        #print((non_veg_ranges*gt_masked_output).shape)
-        #quit()
 
         #loss = self.loss(gt_masked_output, target_range_image)
         loss = self.loss(ground_mask*gt_masked_output, ground_mask*target_range_image)\
-                + 2*self.loss(object_mask*gt_masked_output, object_mask*target_range_image)
+                + 4*self.loss(object_mask*gt_masked_output, object_mask*target_range_image)
         return loss
 
 
