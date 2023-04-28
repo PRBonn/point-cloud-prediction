@@ -72,7 +72,7 @@ class KittiOdometryModule(LightningDataModule):
             dataset=test_set,
             batch_size=self.cfg["TRAIN"]["BATCH_SIZE"],
             shuffle=False,
-            num_workers=self.cfg["DATA_CONFIG"]["DATALOADER"]["NUM_WORKER"],
+            num_workers=4, #self.cfg["DATA_CONFIG"]["DATALOADER"]["NUM_WORKER"],
             pin_memory=True,
             drop_last=False,
             timeout=0,

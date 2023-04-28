@@ -172,6 +172,7 @@ class BasePredictionModel(LightningModule):
         Returns:
             loss (dict): Multiple loss components
         """
+        print("Test")
         past = batch["past_data"]
         future = batch["fut_data"]
 

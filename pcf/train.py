@@ -149,7 +149,6 @@ if __name__ == "__main__":
     trainer = Trainer(
         accelerator="gpu",
         devices=cfg["TRAIN"]["N_GPUS"],
-        #strategy="ddp",
         num_nodes=1,
         logger=tb_logger,
         accumulate_grad_batches=cfg["TRAIN"]["BATCH_ACC"],
@@ -161,20 +160,21 @@ if __name__ == "__main__":
         callbacks=[lr_monitor, checkpoint],
         default_root_dir='log',
         strategy = DDPStrategy(find_unused_parameters=False),
-        check_val_every_n_epoch=5,
-        limit_train_batches=1.0,
-        limit_test_batches=1.0
+        check_val_every_n_epoch=1,
+        limit_train_batches=0.3,
+        limit_val_batches=0.3,
+        limit_test_batches=0.5
     )
 
     ###### Training
-    trainer.fit(model, data)
+    #trainer.fit(model, data)
     
     ###### Testing
     logger = TensorBoardLogger(
         save_dir=cfg["LOG_DIR"], default_hp_metric=False, name="test", version=""
     )
     checkpoint_path = cfg["LOG_DIR"] + "/checkpoints/min_val_loss.ckpt"
-    model = TCNet.load_from_checkpoint(checkpoint_path, cfg=cfg)
+    #model = TCNet.load_from_checkpoint(checkpoint_path, cfg=cfg)
     results = trainer.test(model, data.test_dataloader())
 
     if logger:

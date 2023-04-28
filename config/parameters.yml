@@ -1,5 +1,5 @@
 EXPERIMENT:
-  ID: baseline_sem_mask_loss # Give your experiment a unique ID which is used in the log
+  ID: test # Give your experiment a unique ID which is used in the log
 
 DATA_CONFIG:
   DATASET_NAME: KITTIOdometry
@@ -77,7 +77,7 @@ TRAIN:
   LR: 0.001
   LR_EPOCH: 1
   LR_DECAY: 0.99
-  MAX_EPOCH: 50
+  MAX_EPOCH: 1
   BATCH_SIZE: 8
   BATCH_ACC: 4
   N_GPUS: 2

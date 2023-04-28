@@ -8,10 +8,13 @@ import random
 import yaml
 from pytorch_lightning import Trainer
 from pytorch_lightning import loggers as pl_loggers
+from pytorch_lightning.loggers import TensorBoardLogger
 
 from pytorch_lightning.strategies.ddp import DDPStrategy
-import pcf.datasets.datasets as datasets
-import pcf.models.TCNet as TCNet
+#import pcf.datasets.datasets as datasets
+#import pcf.models.TCNet as TCNet
+from pcf.datasets.datasets import KittiOdometryModule
+from pcf.models.TCNet import TCNet
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("./test.py")
@@ -65,8 +68,10 @@ if __name__ == "__main__":
     cfg["SEED"] = seed
     print("Random seed is ", cfg["SEED"])
 
-    data = datasets.KittiOdometryModule(cfg)
+    data = KittiOdometryModule(cfg)
+    print("data object created")
     data.setup()
+    print("data setup done")
 
     if args.best:
         checkpoint_path = "./pcf/runs/" + args.model + "/checkpoints/min_val_loss.ckpt"
@@ -75,7 +80,7 @@ if __name__ == "__main__":
     cfg["TEST"]["USED_CHECKPOINT"] = checkpoint_path
 
 
-    model = TCNet.TCNet.load_from_checkpoint(checkpoint_path, cfg=cfg)
+    model = TCNet.load_from_checkpoint(checkpoint_path, cfg=cfg)
 
     # Only log if test is done on full data
     if args.limit_test_batches == 1.0:
@@ -88,12 +93,16 @@ if __name__ == "__main__":
     trainer = Trainer(
         limit_test_batches=args.limit_test_batches,
         accelerator="gpu",
-        devices=1, #cfg["TRAIN"]["N_GPUS"],
+        devices=cfg["TRAIN"]["N_GPUS"],
         num_nodes=1,
         #gpus=cfg["TRAIN"]["N_GPUS"],
         strategy = DDPStrategy(find_unused_parameters=False),
         logger=logger,
     )
+    logger = TensorBoardLogger(
+        save_dir=cfg["LOG_DIR"], default_hp_metric=False, name="test", version=""
+    )
+    print("Starting TEST...")
 
     results = trainer.test(model, data.test_dataloader())
 
