@@ -96,3 +96,5 @@ TEST:
   N_BATCHES_TO_SAVE: -1 # If set to -1 and SAVE_POINT_CLOUDS is true, all batches of the test set will be saved.
   SAVE_POINT_CLOUDS: True
   N_DOWNSAMPLED_POINTS_CD: -1 # Can evaluate the CD on downsampled point clouds. Set -1 to evaluate on full point clouds.
+  USE_OBJECT_MASK: True
+  USE_GROUND_MASK: False

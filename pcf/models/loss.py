@@ -194,11 +194,14 @@ class semantic_chamfer_distance(nn.Module):
         batch_size, n_future_steps, H, W = output["rv"].shape
         masked_output = self.projection.get_masked_range_view(output)
         #   Object Mask
-        # masked_output = masked_output*target[:, 4, :, :, :]
+        if self.cfg["TEST"]["USE_OBJECT_MASK"]:
+            masked_output = masked_output*target[:, 4, :, :, :]
         #   Ground Mask
-        # masked_output = masked_output*torch.logical_not(target[:, 4, :, :, :])
+        elif self.cfg["TEST"]["USE_GROUND_MASK"]:
+            masked_output = masked_output*torch.logical_not(target[:, 4, :, :, :])
         #   Binary Mask
-        masked_output = masked_output*1.0
+        else:
+            masked_output = masked_output*1.0
         chamfer_distances = {}
         chamfer_distances_tensor = torch.zeros(n_future_steps, batch_size)
         for s in range(n_future_steps):
@@ -209,17 +212,20 @@ class semantic_chamfer_distance(nn.Module):
                 ).view(1, -1, 3)
                 target_points = target[b, 1:4, s, :, :]
                 #   Object Mask
-                # target_points[0, :, :] = target_points[0, :, :]*target[b, 4, s, :, :]
-                # target_points[1, :, :] = target_points[1, :, :]*target[b, 4, s, :, :]
-                # target_points[2, :, :] = target_points[2, :, :]*target[b, 4, s, :, :]
+                if self.cfg["TEST"]["USE_OBJECT_MASK"]:
+                    target_points[0, :, :] = target_points[0, :, :]*target[b, 4, s, :, :]
+                    target_points[1, :, :] = target_points[1, :, :]*target[b, 4, s, :, :]
+                    target_points[2, :, :] = target_points[2, :, :]*target[b, 4, s, :, :]
                 #   Ground Mask
-                # target_points[0, :, :] = target_points[0, :, :]*torch.logical_not(target[b, 4, s, :, :])
-                # target_points[1, :, :] = target_points[1, :, :]*torch.logical_not(target[b, 4, s, :, :])
-                # target_points[2, :, :] = target_points[2, :, :]*torch.logical_not(target[b, 4, s, :, :])
+                elif self.cfg["TEST"]["USE_GROUND_MASK"]:
+                    target_points[0, :, :] = target_points[0, :, :]*torch.logical_not(target[b, 4, s, :, :])
+                    target_points[1, :, :] = target_points[1, :, :]*torch.logical_not(target[b, 4, s, :, :])
+                    target_points[2, :, :] = target_points[2, :, :]*torch.logical_not(target[b, 4, s, :, :])
                 #   Ground Mask
-                target_points[0, :, :] = target_points[0, :, :]*1.0
-                target_points[1, :, :] = target_points[1, :, :]*1.0
-                target_points[2, :, :] = target_points[2, :, :]*1.0
+                else:
+                    target_points[0, :, :] = target_points[0, :, :]*1.0
+                    target_points[1, :, :] = target_points[1, :, :]*1.0
+                    target_points[2, :, :] = target_points[2, :, :]*1.0
 
                 target_points = target_points.permute(1, 2, 0)
                 # print(target_points.shape)
