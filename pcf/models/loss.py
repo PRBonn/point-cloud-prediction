@@ -23,7 +23,7 @@ class Loss(nn.Module):
         self.loss_weight_mask = self.cfg["TRAIN"]["LOSS_WEIGHT_MASK"]
 
         self.loss_range = loss_range(self.cfg)
-        self.chamfer_distance = chamfer_distance(self.cfg)
+        self.chamfer_distance = semantic_chamfer_distance(self.cfg)
         self.loss_mask = loss_mask(self.cfg)
 
     def forward(self, output, target, mode):
@@ -175,4 +175,82 @@ class chamfer_distance(nn.Module):
                 chamfer_distances[s] += dist_combined
                 chamfer_distances_tensor[s, b] = dist_combined
             chamfer_distances[s] = chamfer_distances[s] / batch_size
+        return chamfer_distances, chamfer_distances_tensor
+
+
+class semantic_chamfer_distance(nn.Module):
+    """Chamfer distance loss. Additionally, the implementation allows the evaluation
+    on downsampled point cloud (this is only for comparison to other methods but not recommended,
+    because it is a bad approximation of the real Chamfer distance.
+    """
+
+    def __init__(self, cfg):
+        super().__init__()
+        self.cfg = cfg
+        self.loss = ChamferDistance()
+        self.projection = projection(self.cfg)
+
+    def forward(self, output, target, n_samples):
+        batch_size, n_future_steps, H, W = output["rv"].shape
+        masked_output = self.projection.get_masked_range_view(output)
+        #   Object Mask
+        # masked_output = masked_output*target[:, 4, :, :, :]
+        #   Ground Mask
+        # masked_output = masked_output*torch.logical_not(target[:, 4, :, :, :])
+        #   Binary Mask
+        masked_output = masked_output*1.0
+        chamfer_distances = {}
+        chamfer_distances_tensor = torch.zeros(n_future_steps, batch_size)
+        for s in range(n_future_steps):
+            chamfer_distances[s] = 0
+            for b in range(batch_size):
+                output_points = self.projection.get_valid_points_from_range_view(
+                    masked_output[b, s, :, :]
+                ).view(1, -1, 3)
+                target_points = target[b, 1:4, s, :, :]
+                #   Object Mask
+                # target_points[0, :, :] = target_points[0, :, :]*target[b, 4, s, :, :]
+                # target_points[1, :, :] = target_points[1, :, :]*target[b, 4, s, :, :]
+                # target_points[2, :, :] = target_points[2, :, :]*target[b, 4, s, :, :]
+                #   Ground Mask
+                # target_points[0, :, :] = target_points[0, :, :]*torch.logical_not(target[b, 4, s, :, :])
+                # target_points[1, :, :] = target_points[1, :, :]*torch.logical_not(target[b, 4, s, :, :])
+                # target_points[2, :, :] = target_points[2, :, :]*torch.logical_not(target[b, 4, s, :, :])
+                #   Ground Mask
+                target_points[0, :, :] = target_points[0, :, :]*1.0
+                target_points[1, :, :] = target_points[1, :, :]*1.0
+                target_points[2, :, :] = target_points[2, :, :]*1.0
+
+                target_points = target_points.permute(1, 2, 0)
+                # print(target_points.shape)
+                # quit()
+                target_points = target_points[target[b, 0, s, :, :] > 0.0].view(
+                    1, -1, 3
+                )
+                # print(output_points.shape)
+                # print(target_points.shape)
+                # quit()
+
+                if n_samples != -1:
+                    n_output_points = output_points.shape[1]
+                    n_target_points = target_points.shape[1]
+
+                    sampled_output_indices = random.sample(
+                        range(n_output_points), n_samples
+                    )
+                    sampled_target_indices = random.sample(
+                        range(n_target_points), n_samples
+                    )
+
+                    output_points = output_points[:, sampled_output_indices, :]
+                    target_points = target_points[:, sampled_target_indices, :]
+
+                dist1, dist2 = self.loss(output_points, target_points)
+                dist_combined = torch.mean(dist1) + torch.mean(dist2)
+                chamfer_distances[s] += dist_combined
+                chamfer_distances_tensor[s, b] = dist_combined
+            chamfer_distances[s] = chamfer_distances[s] / batch_size
+        # print(chamfer_distance)
+        # print(chamfer_distances_tensor)
+        # quit()
         return chamfer_distances, chamfer_distances_tensor

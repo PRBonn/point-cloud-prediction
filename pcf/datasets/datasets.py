@@ -72,7 +72,7 @@ class KittiOdometryModule(LightningDataModule):
             dataset=test_set,
             batch_size=self.cfg["TRAIN"]["BATCH_SIZE"],
             shuffle=False,
-            num_workers=4, #self.cfg["DATA_CONFIG"]["DATALOADER"]["NUM_WORKER"],
+            num_workers=self.cfg["DATA_CONFIG"]["DATALOADER"]["NUM_WORKER"],
             pin_memory=True,
             drop_last=False,
             timeout=0,
@@ -248,6 +248,7 @@ class KittiOdometryRaw(Dataset):
                 (intensity==70) | (intensity==40)\
                         | (intensity==44) | (intensity==48)\
                         | (intensity==49) | (intensity==50)\
+                        | (intensity==72)\
                 ).type(torch.uint8)
         object_mask = torch.logical_not(ground_mask)
         return object_mask # intensity
