@@ -85,8 +85,9 @@ if __name__ == "__main__":
         logger = False
 
     trainer = Trainer(
+        accelerator="gpu",
+        devices=cfg["TRAIN"]["N_GPUS"],
         limit_test_batches=args.limit_test_batches,
-        gpus=cfg["TRAIN"]["N_GPUS"],
         logger=logger,
     )
 

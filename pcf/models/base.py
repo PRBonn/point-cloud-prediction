@@ -207,7 +207,7 @@ class BasePredictionModel(LightningModule):
 
         return loss
 
-    def test_epoch_end(self, outputs):
+    def on_test_epoch_end(self, outputs):
         # Remove first row since it was initialized with zero
         self.chamfer_distances_tensor = self.chamfer_distances_tensor[:, 1:]
         n_steps, _ = self.chamfer_distances_tensor.shape
