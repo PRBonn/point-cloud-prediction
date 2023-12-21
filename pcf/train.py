@@ -145,16 +145,16 @@ if __name__ == "__main__":
 
     ###### Trainer
     trainer = Trainer(
-        gpus=cfg["TRAIN"]["N_GPUS"],
+        accelerator="gpu",
+        devices=cfg["TRAIN"]["N_GPUS"],
         logger=tb_logger,
         accumulate_grad_batches=cfg["TRAIN"]["BATCH_ACC"],
         max_epochs=cfg["TRAIN"]["MAX_EPOCH"],
         log_every_n_steps=cfg["TRAIN"][
             "LOG_EVERY_N_STEPS"
         ],  # times accumulate_grad_batches
-        resume_from_checkpoint=resume_from_checkpoint,
         callbacks=[lr_monitor, checkpoint],
     )
 
     ###### Training
-    trainer.fit(model, data)
+    trainer.fit(model, data, ckpt_path=resume_from_checkpoint)

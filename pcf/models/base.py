@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from pytorch_lightning.core.lightning import LightningModule
+from pytorch_lightning import LightningModule
 from pcf.models.loss import Loss
 from pcf.utils.projection import projection
 from pcf.utils.logger import log_point_clouds, save_range_and_mask, save_point_clouds
@@ -207,7 +207,7 @@ class BasePredictionModel(LightningModule):
 
         return loss
 
-    def test_epoch_end(self, outputs):
+    def on_test_epoch_end(self, outputs):
         # Remove first row since it was initialized with zero
         self.chamfer_distances_tensor = self.chamfer_distances_tensor[:, 1:]
         n_steps, _ = self.chamfer_distances_tensor.shape
